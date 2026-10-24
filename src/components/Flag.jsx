@@ -11,6 +11,8 @@ export function Taegeuk({ r = 40 }) {
   )
 }
 
+const WIPHALA = ['#D8262C', '#F08A1C', '#FFD400', '#FFFFFF', '#2E9B3E', '#1F5FBF', '#7B3FA0']
+
 export default function Flag({ lang, width = 36 }) {
   const height = (width * 24) / 36
   return (
@@ -60,6 +62,55 @@ export default function Flag({ lang, width = 36 }) {
             <circle cx="14" cy="12" r="6.5" fill="#fff" />
             <circle cx="15.8" cy="12" r="5.2" fill="#E30A17" />
             <polygon points={STAR} fill="#fff" transform="translate(21 12) scale(.46)" />
+          </>
+        )}
+        {lang === 'pt' && (
+          <>
+            <rect width="36" height="24" fill="#009C3B" />
+            <polygon points="18,3 33,12 18,21 3,12" fill="#FFDF00" />
+            <circle cx="18" cy="12" r="5.2" fill="#002776" />
+            <path d="M13.2 11.2 Q18 9.6 22.8 12.4" stroke="#fff" strokeWidth="1" fill="none" />
+          </>
+        )}
+        {lang === 'eu' && (
+          <>
+            <rect width="36" height="24" fill="#D52B1E" />
+            <path d="M0 0 L36 24 M36 0 L0 24" stroke="#009B48" strokeWidth="3.4" />
+            <rect y="10" width="36" height="4" fill="#fff" />
+            <rect x="16" width="4" height="24" fill="#fff" />
+          </>
+        )}
+        {lang === 'gn' && (
+          <>
+            <rect width="36" height="8" fill="#D52B1E" />
+            <rect y="8" width="36" height="8" fill="#fff" />
+            <rect y="16" width="36" height="8" fill="#0038A8" />
+            <circle cx="18" cy="12" r="3" fill="none" stroke="#2E7D32" strokeWidth="1" />
+            <circle cx="18" cy="12" r="1" fill="#F4C20D" />
+          </>
+        )}
+        {lang === 'qu' &&
+          WIPHALA.map((c, i) => <rect key={c} y={(i * 24) / 7} width="36" height={24 / 7 + 0.2} fill={c} />)}
+        {lang === 'ay' &&
+          Array.from({ length: 49 }, (_, n) => {
+            const r = Math.floor(n / 7)
+            const c = n % 7
+            return (
+              <rect
+                key={n}
+                x={(c * 36) / 7}
+                y={(r * 24) / 7}
+                width={36 / 7 + 0.2}
+                height={24 / 7 + 0.2}
+                fill={WIPHALA[(c - r + 7) % 7]}
+              />
+            )
+          })}
+        {lang === 'gr' && (
+          <>
+            <rect width="36" height="24" fill="#74ACDF" />
+            <rect y="8" width="36" height="8" fill="#fff" />
+            <circle cx="18" cy="12" r="2.8" fill="#F6B40E" />
           </>
         )}
         <rect width="36" height="24" rx="3.5" fill="none" stroke="rgba(0,0,0,.18)" />

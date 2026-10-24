@@ -1,4 +1,4 @@
-import { LANG_ORDER, LANGS, itemsOf } from '../data/content.js'
+import { LANG_ORDER, LANGS, VOICE_GROUPS, itemsOf } from '../data/content.js'
 import { DAILY_GOAL, computeStreak, dayKey, lastDays } from '../lib/storage.js'
 import { countDue } from '../lib/queue.js'
 import VoicePicker from './VoicePicker.jsx'
@@ -87,12 +87,12 @@ export default function Progress({ state, onSettings, onReset }) {
           Si una voz suena mal, elegí otra de la lista y tocá Probar. Las que dicen Natural, Online o Google
           suelen sonar mejor.
         </p>
-        {LANG_ORDER.map((code) => (
+        {VOICE_GROUPS.map((group) => (
           <VoicePicker
-            key={code}
-            lang={code}
-            voiceName={settings.voices?.[code]}
-            onChange={(name) => onSettings({ voices: { ...settings.voices, [code]: name } })}
+            key={group.key}
+            group={group}
+            voiceName={settings.voices?.[group.key]}
+            onChange={(name) => onSettings({ voices: { ...settings.voices, [group.key]: name } })}
           />
         ))}
         <button

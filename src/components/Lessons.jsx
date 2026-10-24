@@ -1,10 +1,12 @@
 import { LANGS, LESSONS } from '../data/content.js'
+import GeringosoToy from './GeringosoToy.jsx'
 
-export default function Lessons({ lang, progress, onPractice }) {
+export default function Lessons({ lang, progress, voiceName, onPractice }) {
   const meta = LANGS[lang]
   return (
     <section className="list">
       <h1>Lecciones de {meta.name.toLowerCase()}</h1>
+      {lang === 'gr' && <GeringosoToy voiceName={voiceName} />}
       <div className="lesson-grid">
         {LESSONS[lang].map((lesson) => {
           const seen = lesson.items.filter((i) => progress[i.id]).length

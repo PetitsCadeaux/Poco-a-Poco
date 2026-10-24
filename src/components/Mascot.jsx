@@ -32,6 +32,68 @@ function Accessory({ lang }) {
       </g>
     )
   }
+  if (lang === 'pt') {
+    return (
+      <g>
+        <path d="M100 56 q-12 -26 -34 -20 q14 20 34 20z" fill="#0E8A43" />
+        <path d="M100 56 q12 -26 34 -20 q-14 20 -34 20z" fill="#13A855" />
+        <path d="M100 54 q-9 -22 0 -38 q9 16 0 38z" fill="#0E8A43" />
+        <circle cx="100" cy="50" r="5" fill="#FFD84D" />
+      </g>
+    )
+  }
+  if (lang === 'eu') {
+    return (
+      <g>
+        <ellipse cx="100" cy="58" rx="48" ry="12" fill="#B21E14" />
+        <ellipse cx="98" cy="50" rx="35" ry="12" fill="#D52B1E" />
+        <circle cx="98" cy="38" r="3.5" fill="#1C2040" />
+      </g>
+    )
+  }
+  if (lang === 'qu') {
+    return (
+      <g>
+        <path d="M58 72 Q100 8 142 72Z" fill="#C75A0C" />
+        <path d="M64 62 Q100 26 136 62" fill="none" stroke="#FFD84D" strokeWidth="6" />
+        <path d="M60 72 q-12 18 -4 36 q12 2 14 -12z" fill="#F2A33A" />
+        <path d="M140 72 q12 18 4 36 q-12 2 -14 -12z" fill="#F2A33A" />
+        <circle cx="100" cy="24" r="8" fill="#7B3FA0" />
+      </g>
+    )
+  }
+  if (lang === 'gn') {
+    return (
+      <g>
+        <path d="M100 56 V44" stroke="#3A9D4E" strokeWidth="4" strokeLinecap="round" />
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <ellipse key={i} cx="100" cy="26" rx="6" ry="13" transform={`rotate(${i * 60} 100 40)`} fill="#8E5BD0" />
+        ))}
+        <circle cx="100" cy="40" r="6" fill="#F4E04D" />
+      </g>
+    )
+  }
+  if (lang === 'ay') {
+    return (
+      <g>
+        <ellipse cx="100" cy="60" rx="46" ry="9" fill="#4B2E1A" />
+        <path d="M72 60 q0 -32 28 -32 q28 0 28 32z" fill="#6B4429" />
+        <path d="M72 55 H128" stroke="#E7C27A" strokeWidth="5" />
+      </g>
+    )
+  }
+  if (lang === 'gr') {
+    return (
+      <g>
+        <path d="M68 64 Q100 16 132 64Z" fill="#F6B40E" />
+        <path d="M100 26 L100 64 M84 36 L88 64 M116 36 L112 64" stroke="#1274BD" strokeWidth="5" />
+        <circle cx="100" cy="24" r="5" fill="#E4323F" />
+        <g className="prop">
+          <ellipse cx="100" cy="16" rx="22" ry="3.6" fill="#1274BD" />
+        </g>
+      </g>
+    )
+  }
   return (
     <g>
       <path d="M100 56 V38" stroke="#3A9D4E" strokeWidth="4" strokeLinecap="round" />

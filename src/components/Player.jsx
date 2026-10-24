@@ -166,11 +166,19 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
         </span>
       </header>
 
-      {voice.supported && !voice.hasVoice && (
-        <p className="notice">
-          Tu dispositivo no tiene una voz de {meta.name.toLowerCase()} instalada, así que puede sonar mal o no
-          sonar. Probá abrir la app en Edge o instalá una voz desde los ajustes del sistema.
+      {meta.approx ? (
+        <p className="notice info">
+          No hay una voz propia para {meta.name.toLowerCase()}, así que suena con acento español. Sirve de guía
+          porque se escribe casi como se pronuncia. Si podés, practicá también con alguien que lo hable.
         </p>
+      ) : (
+        voice.supported &&
+        !voice.hasVoice && (
+          <p className="notice">
+            Tu dispositivo no tiene una voz de {meta.name.toLowerCase()} instalada, así que puede sonar mal o no
+            sonar. Probá abrir la app en Edge o instalá una voz desde los ajustes del sistema.
+          </p>
+        )
       )}
 
       <div className="player-grid">
@@ -207,7 +215,7 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
               </div>
             ) : (
               <div className="stack">
-                <p className="target" lang={meta.tts}>
+                <p className="target" lang={meta.html}>
                   {item.text}
                 </p>
                 <p className="pron">{item.pron}</p>
