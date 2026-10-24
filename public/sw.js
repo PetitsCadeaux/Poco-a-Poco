@@ -1,5 +1,5 @@
 // Service worker mínimo: red primero, y si no hay conexión usa lo último guardado.
-const CACHE = 'poco-a-poco-v1'
+const CACHE = 'linguastar-v1'
 
 self.addEventListener('install', () => self.skipWaiting())
 
@@ -18,8 +18,11 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(req)
       .then((res) => {
-        const copy = res.clone()
-        caches.open(CACHE).then((c) => c.put(req, copy))
+        // Solo se guardan respuestas completas (los audios piden por partes y no se pueden guardar así).
+        if (res.ok && res.status === 200) {
+          const copy = res.clone()
+          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {})
+        }
         return res
       })
       .catch(() => caches.match(req).then((hit) => hit || caches.match('/index.html')))

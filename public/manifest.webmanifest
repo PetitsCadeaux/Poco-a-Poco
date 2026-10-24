@@ -1,7 +1,7 @@
 {
-  "name": "Poco a poco: idiomas",
-  "short_name": "Poco a poco",
-  "description": "Escuchá, repetí y repasá francés, coreano, japonés y turco.",
+  "name": "LinguaStar: Brilla aprendiendo idiomas",
+  "short_name": "LinguaStar",
+  "description": "Brilla aprendiendo idiomas: escuchá, hablá y subí de rango.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#2447C9",
