@@ -1,6 +1,7 @@
 import { LANG_ORDER, LANGS, itemsOf } from '../data/content.js'
 import { DAILY_GOAL, computeStreak, dayKey, lastDays } from '../lib/storage.js'
 import { countDue } from '../lib/queue.js'
+import VoicePicker from './VoicePicker.jsx'
 
 export default function Progress({ state, onSettings, onReset }) {
   const { days, items, settings } = state
@@ -81,6 +82,19 @@ export default function Progress({ state, onSettings, onReset }) {
             <option value={0.75}>Un poco lenta</option>
           </select>
         </div>
+        <h2 className="sub">Voces</h2>
+        <p className="muted small">
+          Si una voz suena mal, elegí otra de la lista y tocá Probar. Las que dicen Natural, Online o Google
+          suelen sonar mejor.
+        </p>
+        {LANG_ORDER.map((code) => (
+          <VoicePicker
+            key={code}
+            lang={code}
+            voiceName={settings.voices?.[code]}
+            onChange={(name) => onSettings({ voices: { ...settings.voices, [code]: name } })}
+          />
+        ))}
         <button
           className="danger"
           onClick={() => {

@@ -9,7 +9,7 @@ import Icon from './Icon.jsx'
 const NORMAL_RATE = 0.9
 const REQUEUE_LIMIT = 2
 
-export default function Player({ queue, lang, progress, slowRate, streak, onRate, onExit }) {
+export default function Player({ queue, lang, progress, slowRate, voiceName, streak, onRate, onExit }) {
   const meta = LANGS[lang]
   const [list, setList] = useState(queue)
   const [idx, setIdx] = useState(0)
@@ -21,7 +21,7 @@ export default function Player({ queue, lang, progress, slowRate, streak, onRate
   const [error, setError] = useState('')
   const recorderRef = useRef(null)
   const requeued = useRef({})
-  const voice = useVoiceCheck(meta.tts)
+  const voice = useVoiceCheck(meta.tts, voiceName)
 
   const finished = idx >= list.length
   const item = list[idx]
@@ -57,6 +57,7 @@ export default function Player({ queue, lang, progress, slowRate, streak, onRate
     setPlays((p) => p + 1)
     const ok = speak(item.text, meta.tts, {
       rate: slow ? slowRate : NORMAL_RATE,
+      voiceName,
       onend: () => setPlaying(false),
     })
     if (!ok) {
@@ -94,7 +95,7 @@ export default function Player({ queue, lang, progress, slowRate, streak, onRate
     if (!recUrl) return
     setPlaying(true)
     await playUrl(recUrl)
-    const ok = speak(item.text, meta.tts, { rate: NORMAL_RATE, onend: () => setPlaying(false) })
+    const ok = speak(item.text, meta.tts, { rate: NORMAL_RATE, voiceName, onend: () => setPlaying(false) })
     if (!ok) setPlaying(false)
   }
 
