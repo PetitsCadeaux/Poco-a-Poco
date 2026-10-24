@@ -1311,7 +1311,7 @@ select {
   bottom: 0;
   z-index: 5;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   max-width: 600px;
   margin: 0 auto;
@@ -1593,3 +1593,68 @@ select {
     display: none;
   }
 }
+
+
+/* ---------- LinguaStar: marca, rangos, misiones, avisos ---------- */
+.brand { display: flex; flex-direction: column; line-height: 1.05; font-family: 'Fredoka', system-ui, sans-serif; font-weight: 700; font-size: 1.5rem; }
+.brand small { font-family: 'Nunito', system-ui, sans-serif; font-weight: 700; font-size: 0.72rem; opacity: 0.85; letter-spacing: 0.01em; }
+.brand-star { display: inline-block; animation: twinkle 2.4s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.25) rotate(14deg); } }
+
+.rank-row { display: grid; gap: 14px; margin: 16px 0; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .rank-row { grid-template-columns: 1fr 1fr; } }
+.rank-card { display: flex; gap: 14px; align-items: center; }
+.rank-info { flex: 1; min-width: 0; }
+.medal { flex: none; filter: drop-shadow(0 3px 4px rgba(0,0,0,.25)); }
+.missions h2 { margin: 0 0 8px; font-size: 1.1rem; }
+.missions ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.missions li { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 14px; background: color-mix(in srgb, var(--acc) 10%, #fff); }
+.missions li.m-ok { background: color-mix(in srgb, #2fb36d 18%, #fff); }
+.missions .m-icon { font-size: 1.4rem; }
+.missions .m-text { display: flex; flex-direction: column; font-weight: 700; }
+.missions .m-text small { font-weight: 600; opacity: 0.7; }
+.rank-mini { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; margin-left: auto; font-size: 0.85rem; }
+
+.toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 50; background: #1d2433; color: #fff; padding: 12px 18px; border-radius: 999px; font-weight: 800; box-shadow: 0 8px 24px rgba(0,0,0,.3); animation: toast 5s ease forwards; pointer-events: none; max-width: calc(100vw - 32px); text-align: center; }
+@keyframes toast { 0% { opacity: 0; transform: translate(-50%, -20px); } 8%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -10px); } }
+@media (prefers-reduced-motion: reduce) { .brand-star { animation: none; } .toast { animation: toast-rm 5s forwards; } @keyframes toast-rm { 0%,90% { opacity: 1; } 100% { opacity: 0; } } }
+
+.rank-card { flex-direction: row; justify-content: flex-start; }
+.missions { justify-content: flex-start; align-content: start; }
+.missions ul { margin: 0; }
+.brand { margin: 2px 4px 12px; color: var(--acc); }
+.rank-row { align-items: start; }
+.rank-card, .missions { height: auto; }
+.langs li { grid-template-columns: 14px auto 1fr auto; }
+.langs .rank-mini { margin-left: 0; min-width: 84px; }
+
+/* ---------- Mapa del mundo ---------- */
+.worldmap { display: grid; gap: 14px; }
+.map-box { position: relative; height: 62vh; min-height: 320px; max-height: 560px; border-radius: 28px; overflow: hidden; border: 2px solid var(--line); background: #bfe3f5; touch-action: none; user-select: none; -webkit-user-select: none; }
+.map-svg { display: block; cursor: grab; touch-action: none; }
+.map-svg:active { cursor: grabbing; }
+.map-svg .sea { fill: #bfe3f5; }
+.map-svg .grid { stroke: #fff; stroke-opacity: .45; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.map-svg .land { fill: #f3e6b8; stroke: #d9c47e; stroke-linejoin: round; }
+.pin { cursor: pointer; outline: none; }
+.pin-halo { opacity: .28; }
+.pin .flag { filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+.pin.mine .pin-halo { opacity: .55; }
+.pin.on .pin-halo { opacity: .8; animation: pinpulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.pin:focus-visible .pin-halo { opacity: .9; stroke: #1d2433; stroke-width: 3; }
+@keyframes pinpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.28); } }
+.map-ctrl { position: absolute; right: 12px; bottom: 12px; display: grid; gap: 8px; }
+.map-ctrl button { width: 44px; height: 44px; border-radius: 14px; border: 2px solid var(--line); background: #fff; font-size: 1.4rem; font-weight: 800; color: var(--acc); padding: 0; box-shadow: 0 3px 0 rgba(0,0,0,.08); }
+.map-note { position: absolute; left: 12px; bottom: 8px; font-size: .75rem; font-weight: 700; color: #3b5568; opacity: .8; background: rgba(255,255,255,.6); padding: 2px 8px; border-radius: 999px; }
+.map-card { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 14px; }
+.map-info { flex: 1; min-width: 160px; }
+.map-info h2 { margin-bottom: 2px; }
+@media (prefers-reduced-motion: reduce) { .pin.on .pin-halo { animation: none; } }
+
+.credit { font-weight: 800; font-size: .9rem; color: var(--acc); background: color-mix(in srgb, var(--acc) 10%, #fff); border-radius: 999px; padding: 4px 12px; align-self: flex-start; }
+
+.studio input[type='text'] { font: inherit; font-weight: 700; padding: 10px 14px; border-radius: 14px; border: 2px solid var(--line); background: #fff; min-width: 0; flex: 1; max-width: 260px; }
+.studio .field { flex-wrap: wrap; }
+.studio-top { display: flex; gap: 10px; align-items: center; }
+.studio-nav { margin-top: 6px; }
+.studio button:disabled { opacity: .45; }

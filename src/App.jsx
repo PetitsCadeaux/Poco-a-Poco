@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { LANGS, LANG_ORDER } from './data/content.js'
 import { computeStreak, dayKey, loadState, saveState } from './lib/storage.js'
 import { review } from './lib/srs.js'
+import { applyEvent } from './lib/missions.js'
 import { buildDailySession, buildLessonSession } from './lib/queue.js'
 import { stopSpeaking } from './lib/speech.js'
 import Home from './components/Home.jsx'
@@ -11,9 +12,13 @@ import Player from './components/Player.jsx'
 import Icon from './components/Icon.jsx'
 import Flag from './components/Flag.jsx'
 import Backdrop from './components/Backdrop.jsx'
+import Toast from './components/Toast.jsx'
+import WorldMap from './components/WorldMap.jsx'
+import Studio from './components/Studio.jsx'
 
 const TABS = [
   { id: 'home', label: 'Hoy', icon: 'home' },
+  { id: 'map', label: 'Mundo', icon: 'globe' },
   { id: 'lessons', label: 'Lecciones', icon: 'book' },
   { id: 'progress', label: 'Progreso', icon: 'chart' },
 ]
@@ -46,12 +51,20 @@ export default function App() {
   const rate = (item, grade) =>
     setState((s) => {
       const key = dayKey()
-      return {
-        ...s,
-        items: { ...s.items, [item.id]: review(s.items[item.id], grade) },
-        days: { ...s.days, [key]: (s.days[key] || 0) + 1 },
-      }
+      return applyEvent(
+        {
+          ...s,
+          items: { ...s.items, [item.id]: review(s.items[item.id], grade) },
+          days: { ...s.days, [key]: (s.days[key] || 0) + 1 },
+        },
+        s.lang,
+        'practice',
+        grade
+      )
     })
+
+  // 'spoke' = se grabó diciendo la frase, 'compared' = comparó su voz con la original.
+  const mission = (event) => setState((s) => applyEvent(s, s.lang, event))
 
   const startSession = (queue) => {
     if (queue.length > 0) setSession({ queue, lang })
@@ -76,9 +89,11 @@ export default function App() {
             voiceName={settings.voices?.[LANGS[session.lang].voiceKey]}
             streak={computeStreak(days)}
             onRate={rate}
+            onMission={mission}
             onExit={exitSession}
           />
         </div>
+        <Toast claim={state.lastClaim} />
       </div>
     )
   }
@@ -88,7 +103,12 @@ export default function App() {
       <Backdrop lang={lang} />
 
       <aside className="side">
-        <span className="brand">Poco a poco</span>
+        <span className="brand">
+          <span>
+            <span className="brand-star" aria-hidden="true">✨</span> LinguaStar
+          </span>
+          <small>Brilla aprendiendo idiomas</small>
+        </span>
 
         <nav className="langs-tabs" aria-label="Idioma">
           {LANG_ORDER.map((code) => (
@@ -132,9 +152,24 @@ export default function App() {
               days={days}
               items={items}
               daily={daily}
+              state={state}
               onStart={() => startSession(daily.queue)}
               onGoLessons={() => setView('lessons')}
             />
+          )}
+          {view === 'studio' && <Studio lang={lang} onBack={() => setView('progress')} />}
+          {view === 'map' && (
+            <section className="list">
+              <h1>Mundo</h1>
+              <p className="muted">Arrastrá y acercá el mapa. Tocá una bandera para aprender el idioma de ese lugar.</p>
+              <WorldMap
+                lang={lang}
+                onPick={(code) => {
+                  setLang(code)
+                  setView('home')
+                }}
+              />
+            </section>
           )}
           {view === 'lessons' && (
             <Lessons
@@ -147,12 +182,15 @@ export default function App() {
           {view === 'progress' && (
             <Progress
               state={state}
+              onStudio={() => setView('studio')}
               onSettings={(patch) => setState((s) => ({ ...s, settings: { ...s.settings, ...patch } }))}
-              onReset={() => setState((s) => ({ ...s, items: {}, days: {} }))}
+              onReset={() => setState((s) => ({ ...s, items: {}, days: {}, xp: {}, daily: { date: '', langs: {} }, lastClaim: null }))}
             />
           )}
         </main>
       </div>
+
+      <Toast claim={state.lastClaim} />
 
       <nav className="tabbar" aria-label="Secciones">
         {TABS.map((tab) => (
