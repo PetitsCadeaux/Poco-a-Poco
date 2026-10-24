@@ -186,9 +186,9 @@ const raw = {
   tr: [
     {
       title: 'Saludos',
-      tip: 'El turco se pronuncia como se escribe y el golpe de voz va casi siempre en la última sílaba (marcado en MAYÚSCULAS). Cada letra tiene un solo sonido.',
+      tip: 'El turco se pronuncia como se escribe y el golpe de voz va casi siempre en la última sílaba (marcado en MAYÚSCULAS). Cada letra tiene un solo sonido. La h es una h suave, mucho más débil que la j del español, y entre consonante y vocal casi no se oye: "merhaba" suena como "meraba".',
       items: [
-        ['Merhaba', 'mer-ha-BA', 'Hola'],
+        ['Merhaba', 'me-ra-BA', 'Hola'],
         ['Günaydın', 'gün-ay-DIN', 'Buen día'],
         ['İyi akşamlar', 'i-yi ak-sham-LAR', 'Buenas tardes / noches'],
         ['Teşekkür ederim', 'te-shek-KÜR e-de-RIM', 'Gracias'],
