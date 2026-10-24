@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { LANGS } from '../data/content.js'
 import { speak, stopSpeaking, useVoiceCheck } from '../lib/speech.js'
 import { startRecording, playUrl, recordingSupported } from '../lib/recorder.js'
+import { useRealAudio } from '../lib/realaudio.js'
 import { GRADES, previewLabel } from '../lib/srs.js'
 import Waveform from './Waveform.jsx'
 import Icon from './Icon.jsx'
@@ -17,7 +18,7 @@ const CONFETTI = Array.from({ length: 30 }, (_, n) => ({
 const NORMAL_RATE = 0.9
 const REQUEUE_LIMIT = 2
 
-export default function Player({ queue, lang, progress, slowRate, voiceName, streak, onRate, onExit }) {
+export default function Player({ queue, lang, progress, slowRate, voiceName, streak, onRate, onMission, onExit }) {
   const meta = LANGS[lang]
   const [list, setList] = useState(queue)
   const [idx, setIdx] = useState(0)
@@ -30,6 +31,8 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
   const recorderRef = useRef(null)
   const requeued = useRef({})
   const voice = useVoiceCheck(meta.tts, voiceName)
+  const real = useRealAudio(lang)
+  const audioRef = useRef(null)
 
   const finished = idx >= list.length
   const item = list[idx]
@@ -53,21 +56,40 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
   useEffect(
     () => () => {
       stopSpeaking()
+      audioRef.current?.pause()
       recorderRef.current?.stop()
     },
     []
   )
+
+  // Reproduce la voz real de un hablante si existe; si no, la voz del dispositivo.
+  const say = (slow, onend) => {
+    stopSpeaking()
+    audioRef.current?.pause()
+    const useDevice = () => speak(item.text, meta.tts, { rate: slow ? slowRate : NORMAL_RATE, voiceName, onend })
+    const src = real.url(item.id)
+    if (!src) return useDevice()
+    const a = new Audio(src)
+    a.playbackRate = slow ? 0.75 : 1
+    audioRef.current = a
+    let fellBack = false
+    const fallback = () => {
+      if (fellBack) return
+      fellBack = true
+      if (!useDevice()) onend()
+    }
+    a.onended = onend
+    a.onerror = fallback
+    a.play().catch(fallback)
+    return true
+  }
 
   const listen = (slow = false) => {
     if (!item) return
     setError('')
     setPlaying(true)
     setPlays((p) => p + 1)
-    const ok = speak(item.text, meta.tts, {
-      rate: slow ? slowRate : NORMAL_RATE,
-      voiceName,
-      onend: () => setPlaying(false),
-    })
+    const ok = say(slow, () => setPlaying(false))
     if (!ok) {
       setPlaying(false)
       setError('Este navegador no puede reproducir voz. Probá con Chrome, Edge o Safari.')
@@ -81,16 +103,19 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
       recorderRef.current = null
       setRecording(false)
       replaceRecording(url)
+      onMission?.('spoke')
       return
     }
     try {
       stopSpeaking()
+      audioRef.current?.pause()
       setPlaying(false)
       recorderRef.current = await startRecording({
         onTimeout: (url) => {
           recorderRef.current = null
           setRecording(false)
           replaceRecording(url)
+          onMission?.('spoke')
         },
       })
       setRecording(true)
@@ -101,14 +126,16 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
 
   const compare = async () => {
     if (!recUrl) return
+    onMission?.('compared')
     setPlaying(true)
     await playUrl(recUrl)
-    const ok = speak(item.text, meta.tts, { rate: NORMAL_RATE, voiceName, onend: () => setPlaying(false) })
+    const ok = say(false, () => setPlaying(false))
     if (!ok) setPlaying(false)
   }
 
   const grade = (value) => {
     stopSpeaking()
+    audioRef.current?.pause()
     onRate(item, value)
     const seen = requeued.current[item.id] || 0
     if (value === 0 && seen < REQUEUE_LIMIT) {
@@ -166,7 +193,7 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
         </span>
       </header>
 
-      {meta.approx ? (
+      {real.has(item.id) ? null : meta.approx ? (
         <p className="notice info">
           No hay una voz propia para {meta.name.toLowerCase()}, así que suena con acento español. Sirve de guía
           porque se escribe casi como se pronuncia. Si podés, practicá también con alguien que lo hable.
@@ -221,6 +248,11 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
                 <p className="pron">{item.pron}</p>
                 <p className="es">{item.es}</p>
                 <p className="muted small">Repetila en voz alta. Después grabate y compará con el original.</p>
+                {real.has(item.id) && (
+                  <p className="credit">
+                    <span aria-hidden="true">🎙️</span> Voz real{real.speaker ? ` de ${real.speaker}` : ''}
+                  </p>
+                )}
                 <div className="row wrap">
                   <button className="play" onClick={() => listen(false)}>
                     <Icon name="play" /> Escuchar

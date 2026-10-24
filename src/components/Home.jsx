@@ -4,10 +4,13 @@ import { countDue } from '../lib/queue.js'
 import Mascot from './Mascot.jsx'
 import Flag from './Flag.jsx'
 import Icon from './Icon.jsx'
+import Medal from './Medal.jsx'
+import { rankOf } from '../lib/ranks.js'
+import { MISSIONS, todayEntry } from '../lib/missions.js'
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`
 
-export default function Home({ lang, days, items, daily, onStart, onGoLessons }) {
+export default function Home({ lang, days, items, daily, state, onStart, onGoLessons }) {
   const meta = LANGS[lang]
   const total = daily.queue.length
   const minutes = Math.max(1, Math.round(total * 0.8))
@@ -17,6 +20,9 @@ export default function Home({ lang, days, items, daily, onStart, onGoLessons })
   const all = itemsOf(lang)
   const seen = all.filter((i) => items[i.id]).length
   const due = countDue(lang, items)
+  const xp = state.xp?.[lang] || 0
+  const rk = rankOf(xp)
+  const entry = todayEntry(state.daily, lang)
 
   return (
     <section className="home">
@@ -54,6 +60,43 @@ export default function Home({ lang, days, items, daily, onStart, onGoLessons })
         <div className="hero-art">
           <Mascot lang={lang} size={240} />
         </div>
+      </div>
+
+      <div className="rank-row">
+        <article className="card rank-card">
+          <Medal rankId={rk.rank.id} size={72} />
+          <div className="rank-info">
+            <p className="stat-title">
+              Rango {rk.rank.name} · {xp} puntos
+            </p>
+            <div className="meter" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={rk.pct} aria-label="Avance al próximo rango">
+              <span style={{ width: `${rk.pct}%` }} />
+            </div>
+            <p className="muted small">
+              {rk.next ? `Te faltan ${rk.toNext} puntos para ${rk.next.name}.` : '¡Llegaste al rango más alto!'}
+            </p>
+          </div>
+        </article>
+        <article className="card missions">
+          <h2>Misiones de hoy</h2>
+          <ul>
+            {MISSIONS.map((m) => {
+              const n = Math.min(entry[m.field], m.target)
+              const done = entry.claimed.includes(m.id)
+              return (
+                <li key={m.id} className={done ? 'm-ok' : ''}>
+                  <span className="m-icon" aria-hidden="true">{done ? '✅' : m.icon}</span>
+                  <span className="m-text">
+                    {m.title}
+                    <small>
+                      {n}/{m.target} · +{m.xp} puntos
+                    </small>
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </article>
       </div>
 
       <div className="stats">

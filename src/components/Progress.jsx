@@ -2,8 +2,11 @@ import { LANG_ORDER, LANGS, VOICE_GROUPS, itemsOf } from '../data/content.js'
 import { DAILY_GOAL, computeStreak, dayKey, lastDays } from '../lib/storage.js'
 import { countDue } from '../lib/queue.js'
 import VoicePicker from './VoicePicker.jsx'
+import Medal from './Medal.jsx'
+import Icon from './Icon.jsx'
+import { rankOf } from '../lib/ranks.js'
 
-export default function Progress({ state, onSettings, onReset }) {
+export default function Progress({ state, onSettings, onStudio, onReset }) {
   const { days, items, settings } = state
   const week = lastDays(days, 7)
   const max = Math.max(DAILY_GOAL, ...week.map((d) => d.count))
@@ -44,10 +47,25 @@ export default function Progress({ state, onSettings, onReset }) {
                 <span className="muted small">
                   {seen}/{all.length} vistas{due > 0 ? `, ${due} para repasar` : ''}
                 </span>
+                <span className="rank-mini" title={`${state.xp?.[code] || 0} puntos`}>
+                  <Medal rankId={rankOf(state.xp?.[code] || 0).rank.id} size={26} />
+                  {rankOf(state.xp?.[code] || 0).rank.name}
+                </span>
               </li>
             )
           })}
         </ul>
+      </article>
+
+      <article className="card">
+        <h2>Voces reales</h2>
+        <p className="muted small">
+          ¿Hablás alguno de estos idiomas? Grabá las frases con tu voz para que otros aprendan con una pronunciación
+          real.
+        </p>
+        <button className="tonal" onClick={onStudio}>
+          <Icon name="mic" size={20} /> Abrir el estudio de voces
+        </button>
       </article>
 
       <article className="card">
