@@ -250,7 +250,7 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
                 <p className="muted small">Repetila en voz alta. Después grabate y compará con el original.</p>
                 {real.has(item.id) && (
                   <p className="credit">
-                    <span aria-hidden="true">🎙️</span> Voz real{real.speaker ? ` de ${real.speaker}` : ''}
+                    <span aria-hidden="true">🎙️</span> {real.speaker === 'Google' ? 'Voz de Google' : `Voz real${real.speaker ? ` de ${real.speaker}` : ''}`}
                   </p>
                 )}
                 <div className="row wrap">
