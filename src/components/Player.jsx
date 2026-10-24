@@ -5,6 +5,14 @@ import { startRecording, playUrl, recordingSupported } from '../lib/recorder.js'
 import { GRADES, previewLabel } from '../lib/srs.js'
 import Waveform from './Waveform.jsx'
 import Icon from './Icon.jsx'
+import Mascot from './Mascot.jsx'
+
+const CONFETTI = Array.from({ length: 30 }, (_, n) => ({
+  x: `${(n * 37) % 100}%`,
+  d: `${(n % 10) * 0.12}s`,
+  r: `${(n * 53) % 360}deg`,
+  c: ['var(--acc)', 'var(--acc2)', '#FFD84D', '#fff'][n % 4],
+}))
 
 const NORMAL_RATE = 0.9
 const REQUEUE_LIMIT = 2
@@ -112,10 +120,15 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
 
   if (finished) {
     return (
-      <div className="player" style={{ '--acc': meta.color }}>
+      <div className="player">
+        <div className="confetti" aria-hidden="true">
+          {CONFETTI.map((c, n) => (
+            <span key={n} style={{ '--x': c.x, '--d': c.d, '--r': c.r, '--c': c.c }} />
+          ))}
+        </div>
         <section className="card done">
-          <Waveform seed={`listo-${lang}`} />
-          <h2>Sesión completa</h2>
+          <Mascot lang={lang} size={200} talking />
+          <h2>¡Sesión completa!</h2>
           <p>
             Practicaste {queue.length} {queue.length === 1 ? 'frase' : 'frases'} de {meta.name.toLowerCase()}.
           </p>
@@ -133,7 +146,7 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
   }
 
   return (
-    <div className="player" style={{ '--acc': meta.color }}>
+    <div className="player">
       <header className="player-top">
         <button className="icon-btn" onClick={onExit} aria-label="Salir de la sesión">
           <Icon name="close" />
@@ -156,84 +169,94 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
       {voice.supported && !voice.hasVoice && (
         <p className="notice">
           Tu dispositivo no tiene una voz de {meta.name.toLowerCase()} instalada, así que puede sonar mal o no
-          sonar. Instalá una desde los ajustes de voz del sistema.
+          sonar. Probá abrir la app en Edge o instalá una voz desde los ajustes del sistema.
         </p>
       )}
 
-      <section className="card">
-        <Waveform seed={item.text} playing={playing} />
+      <div className="player-grid">
+        <section className="scene">
+          <Mascot lang={lang} talking={playing} size={230} />
+          <div className="bubble" key={`${item.id}-${stage}`} aria-hidden="true">
+            {stage === 'listen' ? '🎧' : item.emoji}
+          </div>
+          <Waveform seed={item.text} playing={playing} />
+        </section>
 
-        {stage === 'listen' ? (
-          <div className="stack">
-            <h2>Escuchá sin leer</h2>
-            <p className="muted">Escuchá la frase 3 veces y fijate en la melodía antes de ver el texto.</p>
-            <div className="dots" role="img" aria-label={`${Math.min(plays, 3)} de 3 escuchas`}>
-              {[0, 1, 2].map((i) => (
-                <span key={i} className={i < plays ? 'on' : ''} />
+        <div className="work">
+          <section className="card">
+            {stage === 'listen' ? (
+              <div className="stack">
+                <h2>Escuchá sin leer</h2>
+                <p className="muted">Escuchá la frase 3 veces y fijate en la melodía antes de ver el texto.</p>
+                <div className="dots" role="img" aria-label={`${Math.min(plays, 3)} de 3 escuchas`}>
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} className={i < plays ? 'on' : ''} />
+                  ))}
+                </div>
+                <div className="row">
+                  <button className="play" onClick={() => listen(false)}>
+                    <Icon name="play" /> Escuchar
+                  </button>
+                  <button className="tonal" onClick={() => listen(true)}>
+                    Lento
+                  </button>
+                </div>
+                <button className={plays >= 3 ? 'primary wide' : 'link'} onClick={() => setStage('repeat')}>
+                  Ver el texto
+                </button>
+              </div>
+            ) : (
+              <div className="stack">
+                <p className="target" lang={meta.tts}>
+                  {item.text}
+                </p>
+                <p className="pron">{item.pron}</p>
+                <p className="es">{item.es}</p>
+                <p className="muted small">Repetila en voz alta. Después grabate y compará con el original.</p>
+                <div className="row wrap">
+                  <button className="play" onClick={() => listen(false)}>
+                    <Icon name="play" /> Escuchar
+                  </button>
+                  <button className="tonal" onClick={() => listen(true)}>
+                    Lento
+                  </button>
+                  {recordingSupported && (
+                    <button
+                      className={`tonal${recording ? ' rec' : ''}`}
+                      onClick={toggleRecord}
+                      aria-pressed={recording}
+                    >
+                      <Icon name={recording ? 'stop' : 'mic'} size={20} /> {recording ? 'Detener' : 'Grabar'}
+                    </button>
+                  )}
+                  {recUrl && (
+                    <button className="tonal" onClick={compare}>
+                      <Icon name="compare" size={20} /> Comparar
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+
+          {error && (
+            <p className="notice err" role="alert">
+              {error}
+            </p>
+          )}
+
+          {stage === 'repeat' && (
+            <div className="grades" role="group" aria-label="¿Qué tan bien te salió?">
+              {GRADES.map((g) => (
+                <button key={g.value} onClick={() => grade(g.value)}>
+                  <strong>{g.label}</strong>
+                  <small>{previewLabel(progress[item.id], g.value)}</small>
+                </button>
               ))}
             </div>
-            <div className="row">
-              <button className="play" onClick={() => listen(false)}>
-                <Icon name="play" /> Escuchar
-              </button>
-              <button className="tonal" onClick={() => listen(true)}>
-                Lento
-              </button>
-            </div>
-            <button className={plays >= 3 ? 'primary wide' : 'link'} onClick={() => setStage('repeat')}>
-              Ver el texto
-            </button>
-          </div>
-        ) : (
-          <div className="stack">
-            <p className="target" lang={meta.tts}>
-              {item.text}
-            </p>
-            <p className="pron">{item.pron}</p>
-            <p className="es">{item.es}</p>
-            <p className="muted small">Repetila en voz alta. Después grabate y compará con el original.</p>
-            <div className="row wrap">
-              <button className="play" onClick={() => listen(false)}>
-                <Icon name="play" /> Escuchar
-              </button>
-              <button className="tonal" onClick={() => listen(true)}>
-                Lento
-              </button>
-              {recordingSupported && (
-                <button
-                  className={`tonal${recording ? ' rec' : ''}`}
-                  onClick={toggleRecord}
-                  aria-pressed={recording}
-                >
-                  <Icon name={recording ? 'stop' : 'mic'} size={20} /> {recording ? 'Detener' : 'Grabar'}
-                </button>
-              )}
-              {recUrl && (
-                <button className="tonal" onClick={compare}>
-                  <Icon name="compare" size={20} /> Comparar
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </section>
-
-      {error && (
-        <p className="notice err" role="alert">
-          {error}
-        </p>
-      )}
-
-      {stage === 'repeat' && (
-        <div className="grades" role="group" aria-label="¿Qué tan bien te salió?">
-          {GRADES.map((g) => (
-            <button key={g.value} onClick={() => grade(g.value)}>
-              <strong>{g.label}</strong>
-              <small>{previewLabel(progress[item.id], g.value)}</small>
-            </button>
-          ))}
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
