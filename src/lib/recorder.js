@@ -6,9 +6,8 @@ export const recordingSupported =
 
 const MAX_MS = 15000
 
-// Empieza a grabar el micrófono. Devuelve { stop() } que resuelve con la URL del audio grabado.
-// Si pasan 15 segundos sin que se detenga, corta sola y avisa por onTimeout(url).
-export async function startRecording({ onTimeout } = {}) {
+// Núcleo común: graba el micrófono y entrega { blob, mime }. Corta solo a los 15 segundos.
+async function begin({ onTimeout } = {}) {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
   const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find((m) =>
     window.MediaRecorder.isTypeSupported?.(m)
@@ -22,8 +21,8 @@ export async function startRecording({ onTimeout } = {}) {
   const finished = new Promise((resolve) => {
     recorder.onstop = () => {
       stream.getTracks().forEach((t) => t.stop())
-      const type = recorder.mimeType || mime || 'audio/webm'
-      resolve(URL.createObjectURL(new Blob(chunks, { type })))
+      const type = (recorder.mimeType || mime || 'audio/webm').split(';')[0]
+      resolve({ blob: new Blob(chunks, { type }), mime: type })
     }
   })
 
@@ -32,7 +31,7 @@ export async function startRecording({ onTimeout } = {}) {
   const timer = setTimeout(() => {
     if (recorder.state !== 'inactive' && !stoppedByUser) {
       recorder.stop()
-      finished.then((url) => onTimeout && onTimeout(url))
+      finished.then((r) => onTimeout && onTimeout(r))
     }
   }, MAX_MS)
 
@@ -45,6 +44,15 @@ export async function startRecording({ onTimeout } = {}) {
     },
   }
 }
+
+// Para el práctico: devuelve { stop() } que resuelve con la URL del audio grabado.
+export async function startRecording({ onTimeout } = {}) {
+  const rec = await begin({ onTimeout: onTimeout && ((r) => onTimeout(URL.createObjectURL(r.blob))) })
+  return { stop: () => rec.stop().then((r) => URL.createObjectURL(r.blob)) }
+}
+
+// Para el estudio de voces: devuelve { stop() } que resuelve con { blob, mime }.
+export const startRecordingBlob = begin
 
 export function playUrl(url) {
   return new Promise((resolve) => {

@@ -7,6 +7,9 @@ const defaults = {
   items: {}, // id -> { ease, interval, reps, due }
   days: {}, // 'YYYY-MM-DD' -> cantidad de frases practicadas
   settings: { newPerSession: 5, slowRate: 0.6, voices: {} },
+  xp: {}, // puntos por idioma
+  daily: { date: '', langs: {} }, // misiones del día
+  lastClaim: null,
 }
 
 export function loadState() {
