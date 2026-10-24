@@ -39,10 +39,15 @@ export function findVoice(tts, preferredName) {
   return list[0] || null
 }
 
-export function speak(text, tts, { rate = 0.9, voiceName, onend } = {}) {
+export function speak(text, tts, { rate = 0.9, voiceName, onend, silentH = false, endMark = false } = {}) {
   if (!synth) return false
   synth.cancel()
-  const utter = new SpeechSynthesisUtterance(text)
+  let said = text
+  // En español la H es muda: se saca para que ninguna voz la pronuncie (la CH se conserva).
+  if (silentH) said = said.replace(/(?<![cC])[hH]/g, '')
+  // Una palabra suelta a veces sale cortada; un punto final hace que la voz la termine bien.
+  if (endMark && !/[.!?¡¿]$/.test(said.trim())) said = `${said.trim()}.`
+  const utter = new SpeechSynthesisUtterance(said)
   utter.lang = tts
   const voice = findVoice(tts, voiceName)
   if (voice) utter.voice = voice
