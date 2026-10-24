@@ -33,6 +33,37 @@
   --paper: linear-gradient(180deg, #fff4f4 0%, #ffffff 60%, #ffeaec 100%);
 }
 
+.shell[data-lang='pt'] {
+  --acc: #0e8a43;
+  --acc2: #ffd84d;
+  --paper: linear-gradient(180deg, #effaf2 0%, #ffffff 55%, #fffbe6 100%);
+}
+.shell[data-lang='eu'] {
+  --acc: #d52b1e;
+  --acc2: #00873c;
+  --paper: linear-gradient(180deg, #fff4f2 0%, #ffffff 55%, #eefaf2 100%);
+}
+.shell[data-lang='qu'] {
+  --acc: #c75a0c;
+  --acc2: #7b3fa0;
+  --paper: linear-gradient(180deg, #fff6ee 0%, #ffffff 55%, #f6f0fb 100%);
+}
+.shell[data-lang='gn'] {
+  --acc: #1a6fb5;
+  --acc2: #d52b1e;
+  --paper: linear-gradient(180deg, #eef6fc 0%, #ffffff 55%, #fff1f1 100%);
+}
+.shell[data-lang='ay'] {
+  --acc: #6a3fb5;
+  --acc2: #f59e0b;
+  --paper: linear-gradient(180deg, #f5f0fc 0%, #ffffff 55%, #fff7e6 100%);
+}
+.shell[data-lang='gr'] {
+  --acc: #1274bd;
+  --acc2: #f6b40e;
+  --paper: linear-gradient(180deg, #eaf5fd 0%, #ffffff 55%, #fff8e1 100%);
+}
+
 .shell {
   --soft: color-mix(in srgb, var(--acc) 10%, #fff);
   --soft-2: color-mix(in srgb, var(--acc2) 18%, #fff);
@@ -155,13 +186,21 @@ button:active {
 /* Selector de idioma (mobile: 4 botones en fila) */
 
 .langs-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 8px;
-  margin-bottom: 8px;
+  margin: 0 -16px 8px;
+  padding: 2px 16px 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.langs-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .lang-btn {
+  flex: 0 0 82px;
+  scroll-snap-align: start;
   flex-direction: column;
   gap: 4px;
   min-height: 70px;
@@ -177,21 +216,9 @@ button:active {
   display: none;
 }
 
-.lang-btn[data-code='fr'].on {
-  border-color: #2447c9;
-  background: #eef2ff;
-}
-.lang-btn[data-code='ko'].on {
-  border-color: #1b4fa8;
-  background: #eef3fb;
-}
-.lang-btn[data-code='ja'].on {
-  border-color: #c8102e;
-  background: #fff0f3;
-}
-.lang-btn[data-code='tr'].on {
-  border-color: #d20f23;
-  background: #fff0f1;
+.lang-btn.on {
+  border-color: var(--c);
+  background: color-mix(in srgb, var(--c) 10%, #fff);
 }
 
 .flag {
@@ -338,6 +365,78 @@ button:active {
   }
 }
 
+/* Euskera: lluvia verde (en Euskadi llueve seguido) */
+.drop {
+  position: absolute;
+  top: -80px;
+  left: var(--x);
+  width: 3px;
+  height: var(--h);
+  border-radius: 3px;
+  background: #00873c;
+  opacity: 0.2;
+  animation: drip var(--t) linear var(--d) infinite;
+}
+@keyframes drip {
+  to {
+    transform: translateY(calc(100vh + 160px));
+  }
+}
+
+/* Quechua: sol (Inti) girando */
+.qu-sun {
+  position: absolute;
+  top: -120px;
+  right: -110px;
+  opacity: 0.13;
+}
+
+/* Guaraní: mandalas de ñandutí */
+.gn-big {
+  position: absolute;
+  right: -130px;
+  bottom: -120px;
+  opacity: 0.1;
+}
+.gn-small {
+  position: absolute;
+  left: 5%;
+  top: 14%;
+  opacity: 0.09;
+}
+
+/* Aimara: cuadrados de los colores de la wiphala */
+.sq {
+  position: absolute;
+  left: var(--x);
+  bottom: -90px;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 6px;
+  background: var(--c);
+  opacity: 0.26;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.08);
+  animation: rise-spin var(--t) linear var(--d) infinite;
+}
+@keyframes rise-spin {
+  to {
+    transform: translateY(calc(-100vh - 200px)) rotate(240deg);
+  }
+}
+
+/* Geringoso: sílabas flotando */
+.syl {
+  position: absolute;
+  left: var(--x);
+  bottom: -90px;
+  font-family: var(--display);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--acc);
+  opacity: 0.13;
+  animation: rise var(--t) linear var(--d) infinite;
+}
+
 /* ───────── Mascota ───────── */
 
 .mascot {
@@ -386,6 +485,16 @@ button:active {
   }
   to {
     transform: scaleY(1.55);
+  }
+}
+.prop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: prop 0.5s linear infinite;
+}
+@keyframes prop {
+  50% {
+    transform: scaleX(0.15);
   }
 }
 .wing {
@@ -503,6 +612,41 @@ button:active {
 }
 .shell[data-lang='tr'] .hero::after {
   background: #fff;
+}
+
+.shell[data-lang='pt'] .hero {
+  background: linear-gradient(135deg, #0e8a43 0%, #0b7a3a 70%, #1f4fa8 190%);
+}
+.shell[data-lang='eu'] .hero {
+  background: linear-gradient(135deg, #d52b1e 0%, #b8231a 100%);
+}
+.shell[data-lang='qu'] .hero {
+  background: linear-gradient(135deg, #c75a0c 0%, #a94a08 70%, #7b3fa0 200%);
+}
+.shell[data-lang='gn'] .hero {
+  background: linear-gradient(135deg, #1a6fb5 0%, #14588f 100%);
+}
+.shell[data-lang='ay'] .hero {
+  background: linear-gradient(135deg, #6a3fb5 0%, #54308f 100%);
+}
+.shell[data-lang='gr'] .hero {
+  background: linear-gradient(135deg, #1a86d0 0%, #1274bd 60%, #0f5f9c 100%);
+}
+.shell[data-lang='pt'] .hero::after {
+  background: linear-gradient(90deg, #009c3b 33.3%, #ffdf00 33.3% 66.6%, #002776 66.6%);
+}
+.shell[data-lang='eu'] .hero::after {
+  background: linear-gradient(90deg, #fff 50%, #009b48 50%);
+}
+.shell[data-lang='qu'] .hero::after,
+.shell[data-lang='ay'] .hero::after {
+  background: linear-gradient(90deg, #d8262c 14.28%, #f08a1c 14.28% 28.56%, #ffd400 28.56% 42.84%, #fff 42.84% 57.12%, #2e9b3e 57.12% 71.4%, #1f5fbf 71.4% 85.68%, #7b3fa0 85.68%);
+}
+.shell[data-lang='gn'] .hero::after {
+  background: linear-gradient(90deg, #d52b1e 33.3%, #fff 33.3% 66.6%, #0038a8 66.6%);
+}
+.shell[data-lang='gr'] .hero::after {
+  background: linear-gradient(90deg, #74acdf 33.3%, #fff 33.3% 66.6%, #74acdf 66.6%);
 }
 
 .hero-text {
@@ -806,6 +950,24 @@ button:active {
 .shell[data-lang='tr'] .scene {
   background: linear-gradient(160deg, #d20f23, #b00b1c);
 }
+.shell[data-lang='pt'] .scene {
+  background: linear-gradient(160deg, #0e8a43, #0a6e35);
+}
+.shell[data-lang='eu'] .scene {
+  background: linear-gradient(160deg, #d52b1e, #a81e14);
+}
+.shell[data-lang='qu'] .scene {
+  background: linear-gradient(160deg, #c75a0c, #9a4308);
+}
+.shell[data-lang='gn'] .scene {
+  background: linear-gradient(160deg, #1a6fb5, #124f85);
+}
+.shell[data-lang='ay'] .scene {
+  background: linear-gradient(160deg, #6a3fb5, #4c2a86);
+}
+.shell[data-lang='gr'] .scene {
+  background: linear-gradient(160deg, #1a86d0, #0f5f9c);
+}
 .scene .mascot {
   filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.12));
 }
@@ -975,9 +1137,55 @@ button:active {
   font-size: 16px;
   border: 2px solid #f5dc8a;
 }
+.notice.info {
+  background: color-mix(in srgb, var(--acc) 8%, #fff);
+  border-color: color-mix(in srgb, var(--acc) 24%, #fff);
+}
 .notice.err {
   background: #fde7e5;
   border-color: #f4b8b3;
+}
+
+/* ───────── Traductor de geringoso ───────── */
+
+.toy {
+  gap: 14px;
+}
+.toy input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 18px;
+  border: 2px solid var(--line);
+  background: #fff;
+  font: inherit;
+  font-size: 20px;
+}
+.toy input:focus-visible {
+  outline: 3px solid var(--acc);
+  outline-offset: 2px;
+}
+.toy-out {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: var(--soft);
+  min-height: 92px;
+}
+.toy-out .big {
+  font-family: var(--script);
+  font-size: clamp(26px, 6vw, 38px);
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+.toy-out .syl-line {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--acc-text);
 }
 
 /* ───────── Progreso ───────── */
@@ -1160,9 +1368,16 @@ select {
   }
 
   .langs-tabs {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin: 0;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: 8px;
+    margin: 0 -8px;
+    padding: 4px 8px;
+    overflow-x: visible;
+    overflow-y: auto;
+    scroll-snap-type: none;
+    scrollbar-width: thin;
   }
 
   .lang-btn {
@@ -1173,10 +1388,12 @@ select {
     row-gap: 0;
     align-items: center;
     justify-items: start;
-    min-height: 68px;
-    padding: 8px 18px;
+    flex: none;
+    width: 100%;
+    min-height: 62px;
+    padding: 6px 18px;
     text-align: left;
-    border-radius: 22px;
+    border-radius: 20px;
   }
   .lang-btn .flag {
     grid-row: 1 / span 2;
@@ -1203,15 +1420,15 @@ select {
   .side-nav {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-top: auto;
+    gap: 4px;
+    flex: none;
   }
   .side-nav button {
     justify-content: flex-start;
-    min-height: 54px;
+    min-height: 48px;
     padding: 0 20px;
-    border-radius: 18px;
-    font-size: 18px;
+    border-radius: 16px;
+    font-size: 17px;
     color: var(--muted);
   }
   .side-nav button.on {
@@ -1324,6 +1541,35 @@ select {
   .done {
     margin-top: 12vh;
     padding: 40px 56px;
+  }
+}
+
+/* Pantallas bajas: el menú de idiomas se compacta para que entren los 10 sin desplazarse */
+@media (min-width: 900px) and (max-height: 1000px) {
+  .side {
+    padding-top: 22px;
+    padding-bottom: 18px;
+    gap: 14px;
+  }
+  .lang-btn {
+    min-height: 48px;
+    padding: 4px 16px;
+  }
+  .lang-btn .flag {
+    grid-row: 1;
+  }
+  .lang-btn .ln-name {
+    font-size: 19px;
+    align-self: center;
+  }
+  .lang-btn .ln-native {
+    display: none;
+  }
+  .langs-tabs {
+    gap: 6px;
+  }
+  .side-nav button {
+    min-height: 44px;
   }
 }
 

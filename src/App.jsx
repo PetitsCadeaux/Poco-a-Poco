@@ -27,6 +27,11 @@ export default function App() {
     saveState(state)
   }, [state])
 
+  // Al cambiar de idioma, el menú se desplaza para que el elegido se vea (importante en el celular).
+  useEffect(() => {
+    document.querySelector('.lang-btn.on')?.scrollIntoView({ inline: 'center', block: 'nearest' })
+  }, [state.lang, session])
+
   const { lang, items, days, settings } = state
 
   const daily = useMemo(
@@ -68,7 +73,7 @@ export default function App() {
             lang={session.lang}
             progress={items}
             slowRate={settings.slowRate}
-            voiceName={settings.voices?.[session.lang]}
+            voiceName={settings.voices?.[LANGS[session.lang].voiceKey]}
             streak={computeStreak(days)}
             onRate={rate}
             onExit={exitSession}
@@ -91,6 +96,7 @@ export default function App() {
               key={code}
               className={`lang-btn${code === lang ? ' on' : ''}`}
               data-code={code}
+              style={{ '--c': LANGS[code].color }}
               aria-pressed={code === lang}
               onClick={() => setLang(code)}
             >
@@ -134,6 +140,7 @@ export default function App() {
             <Lessons
               lang={lang}
               progress={items}
+              voiceName={settings.voices?.es}
               onPractice={(lessonId) => startSession(buildLessonSession(lang, lessonId))}
             />
           )}
