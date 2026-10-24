@@ -65,6 +65,7 @@ export default function App() {
           lang={session.lang}
           progress={items}
           slowRate={settings.slowRate}
+          voiceName={settings.voices?.[session.lang]}
           streak={computeStreak(days)}
           onRate={rate}
           onExit={exitSession}
