@@ -1,33 +1,25 @@
-# Poco a poco: idiomas
+# ✨ LinguaStar ✨
 
-App para practicar **francés, coreano, japonés y turco** escuchando, repitiendo en voz alta y repasando un rato cada día.
+_Brilla aprendiendo idiomas._
 
-## Cómo correrla
+App para aprender idiomas escuchando y hablando: francés, portugués, coreano, japonés, turco, euskera, quechua, guaraní, aimara y geringoso.
 
-```bash
+## Qué tiene
+- Escuchar sin leer, repetir en voz alta, grabarte y comparar, repaso espaciado, racha y meta diaria.
+- **Rangos** por idioma (Bronce, Plata, Oro, Platino, Diamante) con puntos.
+- **Misiones diarias** que piden hablar: practicar, grabarse y comparar la voz.
+- **Mundo**: mapa que se arrastra y se acerca; tocás una bandera y aprendés el idioma de ese lugar.
+- **Estudio de voces**: hablantes nativos graban las frases y la app usa su voz.
+
+## Voces reales
+1. Quien habla el idioma abre la app → Progreso → *Abrir el estudio de voces*, escribe su nombre y graba las frases.
+2. Toca *Descargar ZIP* y se lo pasa a quien administra la app.
+3. En GitHub, dentro de la carpeta `public/`, se sube la carpeta `audio/` que viene en el ZIP (ya trae `audio/<idioma>/` con los audios y un `index.json`).
+4. Vercel publica solo. Las frases que tengan audio suenan con esa voz y muestran "Voz real de …"; las demás siguen con la voz del dispositivo.
+
+## Desarrollo
+```
 npm install
 npm run dev
+npm run build
 ```
-
-Se abre en `http://localhost:5173`. Para publicarla: subila a GitHub y conectá el repo en Vercel (Vite se detecta solo, comando `npm run build`, carpeta `dist`).
-
-## Qué hace
-
-- **Sesión de hoy**: primero las frases que toca repasar y después frases nuevas (5 por defecto, se cambia en Progreso).
-- **Cada frase**: la escuchás 3 veces sin ver el texto, después aparece el texto con la pronunciación aproximada, la repetís en voz alta, te grabás y comparás tu audio con el original.
-- **Repaso espaciado**: al terminar cada frase elegís Otra vez / Difícil / Bien / Fácil y la app decide cuándo vuelve a aparecer.
-- **Racha y meta diaria** de 15 frases.
-- **Lecciones** para practicar un tema puntual, con un consejo de pronunciación por lección.
-- Funciona instalada en el celular (PWA) y guarda el progreso en el dispositivo.
-
-## Cosas a tener en cuenta
-
-- El micrófono solo funciona en `localhost` o con HTTPS (Vercel ya lo da).
-- El audio usa las voces del dispositivo. Si falta la voz de un idioma, la app avisa; en Android y iOS se instala desde los ajustes de voz del sistema.
-- Las pronunciaciones escritas son aproximadas para hispanohablantes (ü = u francesa o turca, ë = e cerrada con labios redondeados, MAYÚSCULAS = sílaba fuerte).
-
-## Dónde tocar
-
-- `src/data/content.js`: todas las lecciones y frases. Para agregar una, sumá `[texto, pronunciación, significado]` a una lección.
-- `src/lib/srs.js`: los intervalos del repaso espaciado.
-- `src/lib/storage.js`: meta diaria y almacenamiento (hoy `localStorage`; se puede cambiar por Supabase para sincronizar entre dispositivos).
