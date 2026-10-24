@@ -38,7 +38,7 @@ export default function GeringosoToy({ voiceName }) {
       <button
         className="play"
         disabled={!out}
-        onClick={() => speak(out, 'es-AR', { rate: 0.85, voiceName })}
+        onClick={() => speak(out, 'es-AR', { rate: 0.85, voiceName, silentH: true })}
       >
         <Icon name="play" /> Escuchar
       </button>

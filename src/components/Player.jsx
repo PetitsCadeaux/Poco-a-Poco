@@ -66,7 +66,7 @@ export default function Player({ queue, lang, progress, slowRate, voiceName, str
   const say = (slow, onend) => {
     stopSpeaking()
     audioRef.current?.pause()
-    const useDevice = () => speak(item.text, meta.tts, { rate: slow ? slowRate : NORMAL_RATE, voiceName, onend })
+    const useDevice = () => speak(item.text, meta.tts, { rate: slow ? slowRate : NORMAL_RATE, voiceName, onend, silentH: lang === 'gr', endMark: lang === 'pt' })
     const src = real.url(item.id)
     if (!src) return useDevice()
     const a = new Audio(src)

@@ -23,7 +23,7 @@ export default function VoicePicker({ group, voiceName, onChange }) {
               </option>
             ))}
           </select>
-          <button className="tonal" onClick={() => speak(group.sample, group.tts, { voiceName: current?.name })}>
+          <button className="tonal" onClick={() => speak(group.sample, group.tts, { voiceName: current?.name, endMark: group.key === 'pt' })}>
             Probar
           </button>
         </div>
