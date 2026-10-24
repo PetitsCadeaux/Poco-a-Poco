@@ -1,13 +1,15 @@
+import { EMOJIS } from './emojis.js'
+
 // Contenido de las lecciones.
 // Cada frase: [texto, pronunciación aproximada para hispanohablantes, significado]
 // Convenciones: ü = u francesa/turca (decí "i" con labios redondeados), ë = e muy cerrada con labios
 // redondeados, MAYÚSCULAS = sílaba fuerte.
 
 export const LANGS = {
-  fr: { code: 'fr', name: 'Francés', native: 'Français', tts: 'fr-FR', color: '#2F4BE0' },
-  ko: { code: 'ko', name: 'Coreano', native: '한국어', tts: 'ko-KR', color: '#D92F68' },
-  ja: { code: 'ja', name: 'Japonés', native: '日本語', tts: 'ja-JP', color: '#D6232F' },
-  tr: { code: 'tr', name: 'Turco', native: 'Türkçe', tts: 'tr-TR', color: '#0B7F72' },
+  fr: { code: 'fr', name: 'Francés', native: 'Français', tts: 'fr-FR', color: '#2447C9', color2: '#E4323F' },
+  ko: { code: 'ko', name: 'Coreano', native: '한국어', tts: 'ko-KR', color: '#C9202F', color2: '#1B4FA8' },
+  ja: { code: 'ja', name: 'Japonés', native: '日本語', tts: 'ja-JP', color: '#C8102E', color2: '#F7A8BC' },
+  tr: { code: 'tr', name: 'Turco', native: 'Türkçe', tts: 'tr-TR', color: '#D20F23', color2: '#FFC9CD' },
 }
 
 export const LANG_ORDER = ['fr', 'ko', 'ja', 'tr']
@@ -241,6 +243,7 @@ export const LESSONS = Object.fromEntries(
         lang,
         title: lesson.title,
         tip: lesson.tip,
+        emoji: EMOJIS[lang]?.[li]?.[0] || '🔤',
         items: lesson.items.map(([text, pron, es], ii) => ({
           id: `${id}-${ii + 1}`,
           lang,
@@ -248,6 +251,7 @@ export const LESSONS = Object.fromEntries(
           text,
           pron,
           es,
+          emoji: EMOJIS[lang]?.[li]?.[ii] || '🔤',
         })),
       }
     }),
