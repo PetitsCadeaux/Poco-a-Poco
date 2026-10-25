@@ -6,11 +6,12 @@ import Flag from './Flag.jsx'
 import Icon from './Icon.jsx'
 import Medal from './Medal.jsx'
 import { rankOf } from '../lib/ranks.js'
+import { levelOf, totalXpOf } from '../lib/level.js'
 import { MISSIONS, todayEntry } from '../lib/missions.js'
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`
 
-export default function Home({ lang, days, items, daily, state, onStart, onGoLessons }) {
+export default function Home({ lang, days, items, daily, state, onStart, onGoLessons, onCharacter }) {
   const meta = LANGS[lang]
   const total = daily.queue.length
   const minutes = Math.max(1, Math.round(total * 0.8))
@@ -23,6 +24,7 @@ export default function Home({ lang, days, items, daily, state, onStart, onGoLes
   const xp = state.xp?.[lang] || 0
   const rk = rankOf(xp)
   const entry = todayEntry(state.daily, lang)
+  const lv = levelOf(totalXpOf(state.xp))
 
   return (
     <section className="home">
@@ -72,9 +74,15 @@ export default function Home({ lang, days, items, daily, state, onStart, onGoLes
             <div className="meter" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={rk.pct} aria-label="Avance al próximo rango">
               <span style={{ width: `${rk.pct}%` }} />
             </div>
+            <p className="level-line">
+              Nivel {lv.level} · {lv.title}
+            </p>
             <p className="muted small">
               {rk.next ? `Te faltan ${rk.toNext} puntos para ${rk.next.name}.` : '¡Llegaste al rango más alto!'}
             </p>
+            <button className="tonal" onClick={onCharacter}>
+              Mi personaje
+            </button>
           </div>
         </article>
         <article className="card missions">

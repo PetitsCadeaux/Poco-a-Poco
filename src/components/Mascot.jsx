@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { Taegeuk } from './Flag.jsx'
+import { HeroContext } from '../lib/hero.js'
 
 // "Pío", el pollito mascota. Cambia de accesorio según el idioma, parpadea y mueve el pico cuando suena el audio.
 function Accessory({ lang }) {
@@ -104,7 +106,139 @@ function Accessory({ lang }) {
   )
 }
 
-export default function Mascot({ lang, talking = false, size = 200 }) {
+const GOLD = '#FFC928'
+const STAR = '0,-12 2.7,-3.7 11.4,-3.7 4.4,1.4 7,9.7 0,4.6 -7,9.7 -4.4,1.4 -11.4,-3.7 -2.7,-3.7'
+const acc = { fill: 'var(--acc)' }
+const acc2 = { fill: 'var(--acc2)' }
+
+// Lo que se ve detrás del cuerpo (la capa).
+function GearBack({ worn }) {
+  if (!worn.includes('capa')) return null
+  return <path d="M46 118 Q12 170 32 194 Q100 178 168 194 Q188 170 154 118Z" style={acc2} stroke="rgba(0,0,0,.15)" strokeWidth="2" />
+}
+
+// Accesorios que se ponen sobre la cabeza y el cuerpo.
+function GearFront({ worn }) {
+  const has = (id) => worn.includes(id)
+  return (
+    <g>
+      {has('capa') && (
+        <g transform="translate(100 150) scale(.7)">
+          <circle r="11" fill={GOLD} stroke="#fff" strokeWidth="2" />
+          <polygon points={STAR} fill="#fff" transform="scale(.6)" />
+        </g>
+      )}
+      {has('bufanda') && (
+        <g>
+          <path d="M44 142 Q100 172 156 142 L152 160 Q100 190 48 160Z" style={acc} />
+          <path d="M128 168 l14 28 l-15 5 l-8 -26z" style={acc2} />
+        </g>
+      )}
+      {has('antifaz') && (
+        <path
+          fillRule="evenodd"
+          style={acc}
+          d="M50 90 Q100 72 150 90 L148 110 Q126 118 108 106 Q100 102 92 106 Q74 118 52 110Z M67 98a11 11 0 1 0 22 0a11 11 0 1 0 -22 0z M111 98a11 11 0 1 0 22 0a11 11 0 1 0 -22 0z"
+        />
+      )}
+      {has('gafas') && (
+        <g fill="#fff" fillOpacity=".25" stroke="#1C2040" strokeWidth="4">
+          <circle cx="78" cy="98" r="15" />
+          <circle cx="122" cy="98" r="15" />
+          <path d="M93 98h14" fill="none" />
+        </g>
+      )}
+      {has('corona') && (
+        <g>
+          <path d="M68 62 L76 30 L90 50 L100 22 L110 50 L124 30 L132 62Z" fill={GOLD} stroke="#E0A200" strokeWidth="3" strokeLinejoin="round" />
+          <circle cx="100" cy="42" r="4" fill="#E4323F" />
+          <circle cx="82" cy="52" r="3" fill="#2F58E8" />
+          <circle cx="118" cy="52" r="3" fill="#2F58E8" />
+        </g>
+      )}
+      {has('estrella') && (
+        <g transform={`translate(100 ${has('corona') ? -2 : 8}) scale(1.5)`}>
+          <circle r="16" fill={GOLD} opacity=".25" />
+          <polygon points={STAR} fill={GOLD} stroke="#fff" strokeWidth="1.6" strokeLinejoin="round" />
+        </g>
+      )}
+      {has('medalla') && (
+        <g transform="translate(100 172)">
+          <path d="M-8 -14 L-2 0 L2 0 L8 -14Z" fill="#2447C9" />
+          <circle r="11" fill={GOLD} stroke="#fff" strokeWidth="2" />
+          <polygon points={STAR} fill="#fff" transform="scale(.6)" />
+        </g>
+      )}
+    </g>
+  )
+}
+
+function Chick({ lang, worn }) {
+  return (
+    <>
+      <ellipse cx="80" cy="176" rx="15" ry="6" fill="#F59E0B" />
+      <ellipse cx="122" cy="176" rx="15" ry="6" fill="#F59E0B" />
+      <ellipse cx="100" cy="112" rx="64" ry="60" fill="#FFD84D" />
+      <ellipse cx="100" cy="130" rx="40" ry="34" fill="#FFF1A8" />
+      <g transform="rotate(-18 38 122)">
+        <ellipse className="wing wing-l" cx="38" cy="122" rx="14" ry="25" fill="#F5C530" />
+      </g>
+      <g transform="rotate(18 162 122)">
+        <ellipse className="wing wing-r" cx="162" cy="122" rx="14" ry="25" fill="#F5C530" />
+      </g>
+      <path d="M94 54 q4 -16 10 0 q6 -14 9 2" fill="none" stroke="#F5C530" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="62" cy="116" r="8" fill="#FF9AA8" opacity=".7" />
+      <circle cx="138" cy="116" r="8" fill="#FF9AA8" opacity=".7" />
+      <g className="eyes">
+        <circle cx="78" cy="98" r="9" fill="#1C2040" />
+        <circle cx="122" cy="98" r="9" fill="#1C2040" />
+        <circle cx="81" cy="95" r="3" fill="#fff" />
+        <circle cx="125" cy="95" r="3" fill="#fff" />
+      </g>
+      <g className="beak">
+        <path d="M90 110 L110 110 L100 126Z" fill="#F97316" />
+      </g>
+      {!worn.includes('corona') && <Accessory lang={lang} />}
+    </>
+  )
+}
+
+// "Chispa", la perrita superheroína (diseño propio). Mueve la cola y saca la lengua al hablar.
+function Pup({ lang, worn }) {
+  return (
+    <>
+      <path className="wing wing-r" d="M158 150 q32 -4 28 -36" fill="none" stroke="#B97A3E" strokeWidth="10" strokeLinecap="round" />
+      <ellipse cx="80" cy="176" rx="15" ry="6" fill="#E9CF9A" />
+      <ellipse cx="122" cy="176" rx="15" ry="6" fill="#E9CF9A" />
+      <ellipse cx="100" cy="112" rx="64" ry="60" fill="#F3DDB0" />
+      <ellipse cx="100" cy="134" rx="40" ry="32" fill="#FFF6E0" />
+      <path d="M46 70 Q18 80 28 126 Q52 132 60 98Z" fill="#B97A3E" />
+      <path d="M154 70 Q182 80 172 126 Q148 132 140 98Z" fill="#B97A3E" />
+      <polygon points={STAR} transform="translate(78 98) scale(1.9)" fill="#9A6330" opacity=".9" />
+      <circle cx="62" cy="118" r="8" fill="#FF9AA8" opacity=".6" />
+      <circle cx="138" cy="118" r="8" fill="#FF9AA8" opacity=".6" />
+      <g className="eyes">
+        <circle cx="78" cy="98" r="9" fill="#1C2040" />
+        <circle cx="122" cy="98" r="9" fill="#1C2040" />
+        <circle cx="81" cy="95" r="3" fill="#fff" />
+        <circle cx="125" cy="95" r="3" fill="#fff" />
+      </g>
+      <ellipse cx="100" cy="124" rx="26" ry="19" fill="#FFF8E8" />
+      <ellipse cx="100" cy="112" rx="9" ry="6.5" fill="#1C2040" />
+      <path d="M100 118 v6 M88 124 q12 8 12 0 q0 8 12 0" fill="none" stroke="#1C2040" strokeWidth="3" strokeLinecap="round" />
+      <g className="beak">
+        <path d="M93 128 Q100 146 107 128Z" fill="#FF7D8E" />
+      </g>
+      {!worn.includes('corona') && !worn.includes('antifaz') && <Accessory lang={lang} />}
+    </>
+  )
+}
+
+export default function Mascot({ lang, talking = false, size = 200, pet: petOverride, worn: wornOverride }) {
+  const hero = useContext(HeroContext)
+  const pet = petOverride || hero.pet
+  const worn = wornOverride || hero.worn
+  const name = pet === 'chispa' ? 'Chispa, la perrita' : 'Pío, el pollito'
   return (
     <svg
       className={`mascot${talking ? ' talking' : ''}`}
@@ -112,32 +246,12 @@ export default function Mascot({ lang, talking = false, size = 200 }) {
       height={size}
       viewBox="0 0 200 200"
       role="img"
-      aria-label="Pío, el pollito"
+      aria-label={name}
     >
       <g className="m-bob">
-        <ellipse cx="80" cy="176" rx="15" ry="6" fill="#F59E0B" />
-        <ellipse cx="122" cy="176" rx="15" ry="6" fill="#F59E0B" />
-        <ellipse cx="100" cy="112" rx="64" ry="60" fill="#FFD84D" />
-        <ellipse cx="100" cy="130" rx="40" ry="34" fill="#FFF1A8" />
-        <g transform="rotate(-18 38 122)">
-          <ellipse className="wing wing-l" cx="38" cy="122" rx="14" ry="25" fill="#F5C530" />
-        </g>
-        <g transform="rotate(18 162 122)">
-          <ellipse className="wing wing-r" cx="162" cy="122" rx="14" ry="25" fill="#F5C530" />
-        </g>
-        <path d="M94 54 q4 -16 10 0 q6 -14 9 2" fill="none" stroke="#F5C530" strokeWidth="5" strokeLinecap="round" />
-        <circle cx="62" cy="116" r="8" fill="#FF9AA8" opacity=".7" />
-        <circle cx="138" cy="116" r="8" fill="#FF9AA8" opacity=".7" />
-        <g className="eyes">
-          <circle cx="78" cy="98" r="9" fill="#1C2040" />
-          <circle cx="122" cy="98" r="9" fill="#1C2040" />
-          <circle cx="81" cy="95" r="3" fill="#fff" />
-          <circle cx="125" cy="95" r="3" fill="#fff" />
-        </g>
-        <g className="beak">
-          <path d="M90 110 L110 110 L100 126Z" fill="#F97316" />
-        </g>
-        <Accessory lang={lang} />
+        <GearBack worn={worn} />
+        {pet === 'chispa' ? <Pup lang={lang} worn={worn} /> : <Chick lang={lang} worn={worn} />}
+        <GearFront worn={worn} />
       </g>
     </svg>
   )
