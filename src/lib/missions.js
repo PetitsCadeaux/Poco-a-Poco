@@ -1,5 +1,6 @@
 import { dayKey } from './storage.js'
 import { XP_BONUS, XP_PHRASE, rankOf } from './ranks.js'
+import { GEAR, levelOf, totalXpOf } from './level.js'
 
 // Misiones del día, para cada idioma. Hablar en voz alta es parte central.
 export const MISSIONS = [
@@ -44,9 +45,19 @@ export function applyEvent(state, lang, event, grade = 0) {
   const after = rankOf(xp).rank
   if (after.id !== before.id) lastClaim = { text: `¡Subiste a ${after.name}!`, at: Date.now(), rank: after.id }
 
+  const newXp = { ...state.xp, [lang]: xp }
+  const lvBefore = levelOf(totalXpOf(state.xp)).level
+  const lvAfter = levelOf(totalXpOf(newXp)).level
+  if (lvAfter > lvBefore) {
+    const unlocked = GEAR.filter((g) => g.level > lvBefore && g.level <= lvAfter).map((g) => g.name)
+    const lvText = `¡Nivel ${lvAfter}!${unlocked.length ? ` Desbloqueaste: ${unlocked.join(', ')}.` : ''}`
+    const rankText = after.id !== before.id ? `¡Subiste a ${after.name}! ` : ''
+    lastClaim = { text: rankText + lvText, at: Date.now(), rank: 'nivel' }
+  }
+
   return {
     ...state,
-    xp: { ...state.xp, [lang]: xp },
+    xp: newXp,
     daily: { date: key, langs: { ...base.langs, [lang]: entry } },
     lastClaim,
   }

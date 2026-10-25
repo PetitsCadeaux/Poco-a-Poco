@@ -10,6 +10,7 @@ const defaults = {
   xp: {}, // puntos por idioma
   daily: { date: '', langs: {} }, // misiones del día
   lastClaim: null,
+  hero: { pet: 'pio', name: '', worn: [] }, // mascota y ropa elegidas
 }
 
 export function loadState() {
@@ -19,6 +20,7 @@ export function loadState() {
       ...defaults,
       ...parsed,
       settings: { ...defaults.settings, ...(parsed.settings || {}) },
+      hero: { ...defaults.hero, ...(parsed.hero || {}) },
     }
   } catch {
     return { ...defaults }
