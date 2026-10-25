@@ -1658,3 +1658,26 @@ select {
 .studio-top { display: flex; gap: 10px; align-items: center; }
 .studio-nav { margin-top: 6px; }
 .studio button:disabled { opacity: .45; }
+
+.level-line { font-weight: 800; color: var(--acc); }
+.rank-info .tonal { margin-top: 8px; }
+
+/* ---------- Mi personaje ---------- */
+.char-preview { align-items: center; text-align: center; }
+.char-name { font-family: 'Fredoka', system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; }
+.char-preview .meter { width: 100%; max-width: 360px; }
+.pet-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pet-pick button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; border-radius: 20px; border: 2px solid var(--line); background: #fff; color: inherit; }
+.pet-pick button.on { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 10%, #fff); }
+.pet-pick small { opacity: .7; font-weight: 600; }
+.character input[type='text'] { font: inherit; font-weight: 700; padding: 10px 14px; border-radius: 14px; border: 2px solid var(--line); background: #fff; min-width: 0; flex: 1; max-width: 220px; }
+.gear-list, .titles { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gear-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.gear-list button { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; border-radius: 18px; border: 2px solid var(--line); background: #fff; color: inherit; }
+.gear-list button.on { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, #fff); }
+.gear-list button:disabled { opacity: .55; }
+.g-icon { font-size: 1.8rem; }
+.g-name { font-weight: 800; }
+.gear-list small { font-weight: 700; opacity: .75; }
+.titles li { font-weight: 700; opacity: .6; }
+.titles li.got { opacity: 1; }

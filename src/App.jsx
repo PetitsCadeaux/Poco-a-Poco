@@ -15,6 +15,9 @@ import Backdrop from './components/Backdrop.jsx'
 import Toast from './components/Toast.jsx'
 import WorldMap from './components/WorldMap.jsx'
 import Studio from './components/Studio.jsx'
+import Character from './components/Character.jsx'
+import { HeroContext } from './lib/hero.js'
+import { GEAR, levelOf, totalXpOf } from './lib/level.js'
 
 const TABS = [
   { id: 'home', label: 'Hoy', icon: 'home' },
@@ -44,6 +47,17 @@ export default function App() {
     // El plan del día se recalcula al cambiar de idioma, de ajustes o al volver a Inicio.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [lang, settings.newPerSession, view, session === null]
+  )
+
+  // Solo se muestra la ropa que ya está desbloqueada para el nivel actual.
+  const level = levelOf(totalXpOf(state.xp)).level
+  const hero = useMemo(
+    () => ({
+      pet: state.hero.pet,
+      name: state.hero.name,
+      worn: state.hero.worn.filter((id) => GEAR.some((g) => g.id === id && g.level <= level)),
+    }),
+    [state.hero, level]
   )
 
   const setLang = (code) => setState((s) => ({ ...s, lang: code }))
@@ -78,6 +92,7 @@ export default function App() {
 
   if (session) {
     return (
+      <HeroContext.Provider value={hero}>
       <div className="shell focus" data-lang={session.lang}>
         <Backdrop lang={session.lang} />
         <div className="stage">
@@ -95,10 +110,12 @@ export default function App() {
         </div>
         <Toast claim={state.lastClaim} />
       </div>
+      </HeroContext.Provider>
     )
   }
 
   return (
+    <HeroContext.Provider value={hero}>
     <div className="shell" data-lang={lang}>
       <Backdrop lang={lang} />
 
@@ -153,8 +170,18 @@ export default function App() {
               items={items}
               daily={daily}
               state={state}
+              onCharacter={() => setView('character')}
               onStart={() => startSession(daily.queue)}
               onGoLessons={() => setView('lessons')}
+            />
+          )}
+          {view === 'character' && (
+            <Character
+              lang={lang}
+              state={state}
+              level={level}
+              onChange={(patch) => setState((s) => ({ ...s, hero: { ...s.hero, ...patch } }))}
+              onBack={() => setView('home')}
             />
           )}
           {view === 'studio' && <Studio lang={lang} onBack={() => setView('progress')} />}
@@ -206,5 +233,6 @@ export default function App() {
         ))}
       </nav>
     </div>
+    </HeroContext.Provider>
   )
 }
